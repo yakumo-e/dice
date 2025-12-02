@@ -15,9 +15,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
 
@@ -25,8 +22,8 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 900px;
-            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
             overflow: hidden;
         }
 
@@ -34,12 +31,28 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 30px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .header h1 {
             font-size: 2em;
-            margin-bottom: 10px;
+        }
+
+        .login-btn {
+            padding: 10px 25px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+
+        .login-btn:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         .content {
@@ -47,58 +60,53 @@
             min-height: 500px;
         }
 
-        .home-content {
+        /* ログインページ */
+        .login-page {
             text-align: center;
+            padding: 60px 20px;
         }
 
-        .home-content h2 {
+        .login-page h2 {
             color: #667eea;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             font-size: 2em;
         }
 
-        .login-section {
-            margin: 40px 0;
-            padding: 30px;
-            background: #f8f9fa;
-            border-radius: 15px;
-        }
-
-        .login-section h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .login-section input {
+        .login-page input {
             padding: 15px;
-            font-size: 1.1em;
+            font-size: 1.2em;
             border: 2px solid #667eea;
             border-radius: 10px;
             width: 100%;
-            max-width: 300px;
-            margin: 0 10px 0 0;
+            max-width: 400px;
+            margin-bottom: 20px;
         }
 
-        .login-section button {
-            padding: 15px 30px;
-            font-size: 1.1em;
+        .login-page button {
+            padding: 15px 40px;
+            font-size: 1.2em;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            margin: 0 10px;
             transition: transform 0.2s;
         }
 
-        .login-section button:hover {
+        .login-page button:hover {
             transform: scale(1.05);
         }
 
+        .login-page .cancel-btn {
+            background: #6c757d;
+        }
+
+        /* ホーム画面 */
         .tabs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
-            margin-top: 30px;
         }
 
         .tab-button {
@@ -119,26 +127,30 @@
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
         }
 
-        .dice-page {
-            text-align: center;
+        /* 固定サイコロエリア */
+        .dice-fixed {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+            padding: 30px;
+            border-bottom: 3px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .back-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
             padding: 10px 20px;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid white;
+            background: #667eea;
             color: white;
+            border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1em;
-            transition: background 0.3s;
+            margin-bottom: 20px;
         }
 
         .back-button:hover {
-            background: rgba(255,255,255,0.3);
+            background: #5568d3;
         }
 
         .dice-results {
@@ -146,29 +158,22 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-            margin: 40px 0;
+            margin: 20px 0;
         }
 
         .dice {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             background: white;
             border: 3px solid #667eea;
             border-radius: 15px;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 50px;
+            font-size: 40px;
             font-weight: bold;
             color: #667eea;
             transition: transform 0.5s;
-        }
-
-        .dice-label {
-            font-size: 12px;
-            margin-top: 5px;
-            color: #999;
         }
 
         .dice.rolling {
@@ -180,6 +185,14 @@
             25% { transform: rotate(90deg); }
             50% { transform: rotate(180deg); }
             75% { transform: rotate(270deg); }
+        }
+
+        .dice-labels {
+            text-align: center;
+            font-size: 1.3em;
+            color: #667eea;
+            font-weight: bold;
+            margin-top: 15px;
         }
 
         .roll-button {
@@ -198,39 +211,53 @@
             transform: scale(1.05);
         }
 
+        /* タブコンテンツ */
+        .tab-content {
+            padding: 30px;
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        /* ホストコントロール */
         .host-controls {
-            margin-top: 40px;
-            padding: 20px;
+            margin: 30px;
+            padding: 25px;
             background: #fff3cd;
             border-radius: 10px;
             border: 2px solid #ffc107;
-            text-align: left;
         }
 
         .host-controls h3 {
             color: #856404;
-            margin-bottom: 15px;
-            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.3em;
         }
 
         .host-controls label {
             display: block;
-            margin: 10px 0 5px 0;
+            margin: 15px 0 5px 0;
             color: #856404;
             font-weight: bold;
         }
 
-        .host-controls input {
+        .host-controls input, .host-controls textarea {
             width: 100%;
             padding: 10px;
             border: 2px solid #ffc107;
             border-radius: 8px;
             font-size: 1em;
             margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .host-controls textarea {
+            min-height: 150px;
+            resize: vertical;
         }
 
         .host-controls button {
-            padding: 10px 30px;
+            padding: 12px 30px;
             background: #ffc107;
             color: #856404;
             border: none;
@@ -238,11 +265,39 @@
             cursor: pointer;
             font-size: 1em;
             font-weight: bold;
-            margin-top: 10px;
+            margin: 10px 10px 0 0;
         }
 
         .host-controls button:hover {
             background: #e0a800;
+        }
+
+        .host-controls .danger-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .host-controls .danger-btn:hover {
+            background: #c82333;
+        }
+
+        .dice-log {
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .log-entry {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9em;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
         }
 
         .hidden {
@@ -252,101 +307,74 @@
 </head>
 <body>
     <div class="container">
-        <div class="header" style="position: relative;">
-            <button id="backBtn" class="back-button hidden" onclick="goHome()">← ホームに戻る</button>
+        <div class="header">
             <h1>🎲 サイコロタブサイト</h1>
-            <p id="userStatus">ゲストモード</p>
+            <button class="login-btn" onclick="showLoginPage()">🔑 ログイン</button>
         </div>
 
         <div class="content">
+            <!-- ログインページ -->
+            <div id="loginPage" class="login-page hidden">
+                <h2>ホストログイン</h2>
+                <input type="password" id="hostIdInput" placeholder="ホストID">
+                <br>
+                <button onclick="login()">ログイン</button>
+                <button class="cancel-btn" onclick="cancelLogin()">キャンセル</button>
+            </div>
+
             <!-- ホーム画面 -->
-            <div id="home" class="home-content">
-
-                <div class="login-section">
-                    <h3>🔑 ホストログイン</h3>
-                    <input type="password" id="hostId" placeholder="ホストID">
-                    <button onclick="login()">ログイン</button>
-                </div>
-
-                <div class="tabs-grid">
-                    <button class="tab-button" onclick="openTab(1)">
-                        <div>🎲</div>
-                        <div id="tabTitle1">運試しサイコロ</div>
-                    </button>
-                    <button class="tab-button" onclick="openTab(2)">
-                        <div>🎯</div>
-                        <div id="tabTitle2">決断サイコロ</div>
-                    </button>
-                    <button class="tab-button" onclick="openTab(3)">
-                        <div>⚡</div>
-                        <div id="tabTitle3">チャレンジサイコロ</div>
-                    </button>
+            <div id="homePage">
+                <div class="tabs-grid" id="tabsGrid">
+                    <!-- タブボタンが動的に追加される -->
                 </div>
 
                 <!-- ホスト設定 - ホーム -->
                 <div id="hostHomeControls" class="host-controls hidden">
-                    <h3>🔧 タブタイトル設定</h3>
-                    <label>タブ1のタイトル:</label>
-                    <input type="text" id="titleInput1" value="運試しサイコロ">
-                    <label>タブ2のタイトル:</label>
-                    <input type="text" id="titleInput2" value="決断サイコロ">
-                    <label>タブ3のタイトル:</label>
-                    <input type="text" id="titleInput3" value="チャレンジサイコロ">
-                    <button onclick="updateTitles()">タイトルを更新</button>
+                    <h3>🔧 ホーム設定</h3>
+                    <button onclick="addNewTab()">➕ 新しいタブを追加</button>
+                    <button onclick="saveAllSettings()">💾 すべての設定を保存</button>
                 </div>
             </div>
 
-            <!-- タブ1 -->
-            <div id="tab1" class="dice-page hidden">
-                <h2 id="tabPageTitle1">運試しサイコロ</h2>
-                <div class="dice-results" id="diceContainer1"></div>
-                <button class="roll-button" onclick="rollAllDice(1)">🎲 ロール</button>
-
-                <div id="hostTab1Controls" class="host-controls hidden">
-                    <h3>🔧 サイコロ設定</h3>
-                    <label>サイコロの数:</label>
-                    <input type="number" id="diceCount1" value="2" min="1" max="10">
-                    <label>サイコロの範囲（最小）:</label>
-                    <input type="number" id="diceMin1" value="1" min="0">
-                    <label>サイコロの範囲（最大）:</label>
-                    <input type="number" id="diceMax1" value="6" min="1">
-                    <button onclick="updateDiceSettings(1)">設定を適用</button>
+            <!-- タブページ -->
+            <div id="tabPage" class="hidden">
+                <div class="dice-fixed">
+                    <button class="back-button" onclick="goHome()">← ホームに戻る</button>
+                    <h2 id="currentTabTitle" style="color: #667eea; margin-bottom: 20px;"></h2>
+                    <div class="dice-results" id="diceContainer"></div>
+                    <div class="dice-labels" id="diceLabels"></div>
+                    <button class="roll-button" onclick="rollAllDice()">🎲 ロール</button>
                 </div>
-            </div>
 
-            <!-- タブ2 -->
-            <div id="tab2" class="dice-page hidden">
-                <h2 id="tabPageTitle2">決断サイコロ</h2>
-                <div class="dice-results" id="diceContainer2"></div>
-                <button class="roll-button" onclick="rollAllDice(2)">🎲 ロール</button>
+                <div class="tab-content" id="tabContentText"></div>
 
-                <div id="hostTab2Controls" class="host-controls hidden">
-                    <h3>🔧 サイコロ設定</h3>
+                <!-- ホスト設定 - タブ -->
+                <div id="hostTabControls" class="host-controls hidden">
+                    <h3>🔧 タブ設定</h3>
+                    
+                    <label>タブタイトル:</label>
+                    <input type="text" id="editTabTitle">
+                    
+                    <label>タブ内容:</label>
+                    <textarea id="editTabContent" placeholder="タブの説明や内容を入力..."></textarea>
+                    
                     <label>サイコロの数:</label>
-                    <input type="number" id="diceCount2" value="2" min="1" max="10">
+                    <input type="number" id="editDiceCount" value="2" min="1" max="10">
+                    
                     <label>サイコロの範囲（最小）:</label>
-                    <input type="number" id="diceMin2" value="1" min="0">
+                    <input type="number" id="editDiceMin" value="1" min="0">
+                    
                     <label>サイコロの範囲（最大）:</label>
-                    <input type="number" id="diceMax2" value="6" min="1">
-                    <button onclick="updateDiceSettings(2)">設定を適用</button>
-                </div>
-            </div>
-
-            <!-- タブ3 -->
-            <div id="tab3" class="dice-page hidden">
-                <h2 id="tabPageTitle3">チャレンジサイコロ</h2>
-                <div class="dice-results" id="diceContainer3"></div>
-                <button class="roll-button" onclick="rollAllDice(3)">🎲 ロール</button>
-
-                <div id="hostTab3Controls" class="host-controls hidden">
-                    <h3>🔧 サイコロ設定</h3>
-                    <label>サイコロの数:</label>
-                    <input type="number" id="diceCount3" value="2" min="1" max="10">
-                    <label>サイコロの範囲（最小）:</label>
-                    <input type="number" id="diceMin3" value="1" min="0">
-                    <label>サイコロの範囲（最大）:</label>
-                    <input type="number" id="diceMax3" value="6" min="1">
-                    <button onclick="updateDiceSettings(3)">設定を適用</button>
+                    <input type="number" id="editDiceMax" value="6" min="1">
+                    
+                    <label>サイコロのラベル（カンマ区切り、例: w,x,y,z）:</label>
+                    <input type="text" id="editDiceLabels" value="w,x">
+                    
+                    <button onclick="applyTabSettings()">設定を適用</button>
+                    <button class="danger-btn" onclick="deleteTab()">🗑️ このタブを削除</button>
+                    
+                    <h3 style="margin-top: 30px;">📊 サイコロの記録</h3>
+                    <div class="dice-log" id="diceLog"></div>
                 </div>
             </div>
         </div>
@@ -354,121 +382,234 @@
 
     <script>
         let isHost = false;
-        let currentTab = 'home';
+        let currentTabId = null;
         
-        // 各タブのサイコロ設定
-        const diceSettings = {
-            1: { count: 2, min: 1, max: 6 },
-            2: { count: 2, min: 1, max: 6 },
-            3: { count: 2, min: 1, max: 6 }
-        };
+        // タブデータ
+        let tabs = [
+            { id: 1, title: '運試しサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
+            { id: 2, title: '決断サイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
+            { id: 3, title: 'チャレンジサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] }
+        ];
+        let nextTabId = 4;
+
+        // 初期化
+        renderTabs();
+
+        function showLoginPage() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+        }
+
+        function cancelLogin() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('homePage').classList.remove('hidden');
+            document.getElementById('hostIdInput').value = '';
+        }
 
         function login() {
-            const hostId = document.getElementById('hostId').value.trim();
+            const hostId = document.getElementById('hostIdInput').value.trim();
             
             if (hostId === 'yakumo') {
                 isHost = true;
-                document.getElementById('userStatus').textContent = '🔑 ホストモード';
                 document.getElementById('hostHomeControls').classList.remove('hidden');
-                document.getElementById('hostTab1Controls').classList.remove('hidden');
-                document.getElementById('hostTab2Controls').classList.remove('hidden');
-                document.getElementById('hostTab3Controls').classList.remove('hidden');
                 alert('ホストモードでログインしました！');
+                cancelLogin();
             } else {
                 alert('IDが正しくありません');
             }
         }
 
-        function updateTitles() {
-            const title1 = document.getElementById('titleInput1').value;
-            const title2 = document.getElementById('titleInput2').value;
-            const title3 = document.getElementById('titleInput3').value;
+        function renderTabs() {
+            const grid = document.getElementById('tabsGrid');
+            grid.innerHTML = '';
             
-            document.getElementById('tabTitle1').textContent = title1;
-            document.getElementById('tabTitle2').textContent = title2;
-            document.getElementById('tabTitle3').textContent = title3;
-            
-            document.getElementById('tabPageTitle1').textContent = title1;
-            document.getElementById('tabPageTitle2').textContent = title2;
-            document.getElementById('tabPageTitle3').textContent = title3;
+            tabs.forEach(tab => {
+                const button = document.createElement('button');
+                button.className = 'tab-button';
+                button.innerHTML = `<div>🎲</div><div>${tab.title}</div>`;
+                button.onclick = () => openTab(tab.id);
+                grid.appendChild(button);
+            });
         }
 
-        function openTab(tabNumber) {
-            document.getElementById('home').classList.add('hidden');
-            document.getElementById('backBtn').classList.remove('hidden');
-            document.getElementById('tab' + tabNumber).classList.remove('hidden');
-            currentTab = tabNumber;
+        function openTab(tabId) {
+            currentTabId = tabId;
+            const tab = tabs.find(t => t.id === tabId);
             
-            // 自動でサイコロを振る
-            initializeDice(tabNumber);
-            rollAllDice(tabNumber);
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('tabPage').classList.remove('hidden');
+            document.getElementById('currentTabTitle').textContent = tab.title;
+            document.getElementById('tabContentText').textContent = tab.content;
+            
+            if (isHost) {
+                document.getElementById('hostTabControls').classList.remove('hidden');
+                document.getElementById('editTabTitle').value = tab.title;
+                document.getElementById('editTabContent').value = tab.content;
+                document.getElementById('editDiceCount').value = tab.diceCount;
+                document.getElementById('editDiceMin').value = tab.diceMin;
+                document.getElementById('editDiceMax').value = tab.diceMax;
+                document.getElementById('editDiceLabels').value = tab.labels.join(',');
+                renderDiceLog(tab);
+            }
+            
+            initializeDice();
+            rollAllDice();
         }
 
         function goHome() {
-            document.getElementById('tab1').classList.add('hidden');
-            document.getElementById('tab2').classList.add('hidden');
-            document.getElementById('tab3').classList.add('hidden');
-            document.getElementById('backBtn').classList.add('hidden');
-            document.getElementById('home').classList.remove('hidden');
-            currentTab = 'home';
+            document.getElementById('tabPage').classList.add('hidden');
+            document.getElementById('homePage').classList.remove('hidden');
+            currentTabId = null;
         }
 
-        function initializeDice(tabNumber) {
-            const settings = diceSettings[tabNumber];
-            const container = document.getElementById('diceContainer' + tabNumber);
+        function initializeDice() {
+            const tab = tabs.find(t => t.id === currentTabId);
+            const container = document.getElementById('diceContainer');
             container.innerHTML = '';
             
-            for (let i = 0; i < settings.count; i++) {
-                const diceDiv = document.createElement('div');
-                diceDiv.className = 'dice';
-                diceDiv.id = 'dice' + tabNumber + '_' + i;
-                diceDiv.innerHTML = `
-                    <div>?</div>
-                    <div class="dice-label">x:${i}, y:0</div>
-                `;
-                container.appendChild(diceDiv);
+            for (let i = 0; i < tab.diceCount; i++) {
+                const dice = document.createElement('div');
+                dice.className = 'dice';
+                dice.id = 'dice_' + i;
+                dice.textContent = '?';
+                container.appendChild(dice);
             }
         }
 
-        function rollAllDice(tabNumber) {
-            const settings = diceSettings[tabNumber];
+        function rollAllDice() {
+            const tab = tabs.find(t => t.id === currentTabId);
+            const results = [];
             
-            for (let i = 0; i < settings.count; i++) {
-                rollSingleDice(tabNumber, i);
+            for (let i = 0; i < tab.diceCount; i++) {
+                const dice = document.getElementById('dice_' + i);
+                dice.classList.add('rolling');
+                
+                setTimeout(() => {
+                    const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
+                    dice.textContent = result;
+                    dice.classList.remove('rolling');
+                    results.push(result);
+                    
+                    if (i === tab.diceCount - 1) {
+                        updateDiceLabels(results);
+                        logDiceRoll(results);
+                    }
+                }, 500);
             }
         }
 
-        function rollSingleDice(tabNumber, index) {
-            const settings = diceSettings[tabNumber];
-            const dice = document.getElementById('dice' + tabNumber + '_' + index);
+        function updateDiceLabels(results) {
+            const tab = tabs.find(t => t.id === currentTabId);
+            const labelsDiv = document.getElementById('diceLabels');
+            const labelParts = [];
             
-            if (!dice) return;
+            for (let i = 0; i < results.length; i++) {
+                const label = tab.labels[i] || String.fromCharCode(119 + i); // w, x, y, z...
+                labelParts.push(`${label}:${results[i]}`);
+            }
             
-            dice.classList.add('rolling');
-            
-            setTimeout(() => {
-                const result = Math.floor(Math.random() * (settings.max - settings.min + 1)) + settings.min;
-                dice.innerHTML = `
-                    <div>${result}</div>
-                    <div class="dice-label">x:${index}, y:0</div>
-                `;
-                dice.classList.remove('rolling');
-            }, 500);
+            labelsDiv.textContent = labelParts.join(' ');
         }
 
-        function updateDiceSettings(tabNumber) {
-            const count = parseInt(document.getElementById('diceCount' + tabNumber).value);
-            const min = parseInt(document.getElementById('diceMin' + tabNumber).value);
-            const max = parseInt(document.getElementById('diceMax' + tabNumber).value);
+        function logDiceRoll(results) {
+            const tab = tabs.find(t => t.id === currentTabId);
+            const timestamp = new Date().toLocaleString('ja-JP');
+            const ip = '192.168.1.' + Math.floor(Math.random() * 255); // 模擬IP
             
-            if (max < min) {
-                alert('最大値は最小値より大きくしてください');
+            const logEntry = {
+                timestamp,
+                ip,
+                results: [...results]
+            };
+            
+            tab.logs.unshift(logEntry);
+            if (tab.logs.length > 100) tab.logs.pop(); // 最大100件
+            
+            if (isHost) {
+                renderDiceLog(tab);
+            }
+        }
+
+        function renderDiceLog(tab) {
+            const logDiv = document.getElementById('diceLog');
+            logDiv.innerHTML = '';
+            
+            if (tab.logs.length === 0) {
+                logDiv.innerHTML = '<p style="color: #999;">まだ記録がありません</p>';
                 return;
             }
             
-            diceSettings[tabNumber] = { count, min, max };
-            initializeDice(tabNumber);
-            rollAllDice(tabNumber);
+            tab.logs.forEach(log => {
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                const resultLabels = log.results.map((r, i) => {
+                    const label = tab.labels[i] || String.fromCharCode(119 + i);
+                    return `${label}:${r}`;
+                }).join(' ');
+                entry.innerHTML = `
+                    <strong>${log.timestamp}</strong><br>
+                    IP: ${log.ip}<br>
+                    結果: ${resultLabels}
+                `;
+                logDiv.appendChild(entry);
+            });
+        }
+
+        function applyTabSettings() {
+            const tab = tabs.find(t => t.id === currentTabId);
+            
+            tab.title = document.getElementById('editTabTitle').value;
+            tab.content = document.getElementById('editTabContent').value;
+            tab.diceCount = parseInt(document.getElementById('editDiceCount').value);
+            tab.diceMin = parseInt(document.getElementById('editDiceMin').value);
+            tab.diceMax = parseInt(document.getElementById('editDiceMax').value);
+            
+            const labelsInput = document.getElementById('editDiceLabels').value;
+            tab.labels = labelsInput.split(',').map(l => l.trim()).filter(l => l);
+            
+            document.getElementById('currentTabTitle').textContent = tab.title;
+            document.getElementById('tabContentText').textContent = tab.content;
+            
+            initializeDice();
+            rollAllDice();
+            renderTabs();
+        }
+
+        function addNewTab() {
+            const title = prompt('新しいタブのタイトルを入力:');
+            if (!title) return;
+            
+            tabs.push({
+                id: nextTabId++,
+                title: title,
+                content: '',
+                diceCount: 2,
+                diceMin: 1,
+                diceMax: 6,
+                labels: ['w', 'x'],
+                logs: []
+            });
+            
+            renderTabs();
+        }
+
+        function deleteTab() {
+            if (!confirm('このタブを削除しますか？')) return;
+            
+            tabs = tabs.filter(t => t.id !== currentTabId);
+            renderTabs();
+            goHome();
+        }
+
+        function saveAllSettings() {
+            const data = JSON.stringify(tabs);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'dice-tabs-settings.json';
+            a.click();
+            alert('設定を保存しました！');
         }
     </script>
 </body>
