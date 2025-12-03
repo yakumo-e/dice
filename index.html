@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>サイコロタブサイト</title>
+    <title>運命のダイス</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,7 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             overflow: hidden;
         }
@@ -30,14 +30,14 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .header h1 {
-            font-size: 2em;
+            font-size: 1.8em;
             cursor: pointer;
             transition: opacity 0.3s;
         }
@@ -47,13 +47,13 @@
         }
 
         .login-btn {
-            padding: 10px 25px;
+            padding: 8px 12px;
             background: rgba(255,255,255,0.2);
             border: 2px solid white;
             color: white;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.2em;
             transition: background 0.3s;
         }
 
@@ -142,51 +142,20 @@
             padding: 15px 30px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .dice-results-bar {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .dice-small {
-            width: 50px;
-            height: 50px;
-            background: white;
-            border: 2px solid white;
-            border-radius: 8px;
-            display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-            transition: transform 0.5s;
-        }
-
-        .dice-small.rolling {
-            animation: roll 0.5s ease-in-out;
-        }
-
-        @keyframes roll {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(90deg); }
-            50% { transform: rotate(180deg); }
-            75% { transform: rotate(270deg); }
+            gap: 30px;
         }
 
         .dice-labels-bar {
             color: white;
-            font-size: 1.3em;
+            font-size: 1.5em;
             font-weight: bold;
         }
 
         .roll-button-bar {
-            padding: 10px 25px;
-            font-size: 1em;
+            padding: 8px 12px;
+            font-size: 1.3em;
             background: white;
             color: #667eea;
             border: none;
@@ -197,13 +166,13 @@
         }
 
         .roll-button-bar:hover {
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
         /* タブコンテンツ */
         .tab-content-box {
-            margin: 30px;
-            padding: 30px;
+            margin: 30px auto;
+            padding: 40px;
             background: #f8f9fa;
             border: 2px solid #e0e0e0;
             border-radius: 15px;
@@ -212,6 +181,7 @@
             color: #333;
             min-height: 200px;
             white-space: pre-wrap;
+            max-width: 100%;
         }
 
         /* ホストコントロール */
@@ -336,8 +306,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1 onclick="goHome()">🎲 サイコロタブサイト</h1>
-            <button class="login-btn" onclick="showLoginPage()">🔑 ログイン</button>
+            <h1 onclick="goHome()">運命のダイス</h1>
+            <button class="login-btn" onclick="showLoginPage()">🔑</button>
         </div>
 
         <div class="content">
@@ -367,9 +337,8 @@
             <!-- タブページ -->
             <div id="tabPage" class="hidden">
                 <div class="dice-bar">
-                    <div class="dice-results-bar" id="diceContainer"></div>
                     <div class="dice-labels-bar" id="diceLabels"></div>
-                    <button class="roll-button-bar" onclick="rollAllDice()">🎲 ロール</button>
+                    <button class="roll-button-bar" onclick="rollAllDice()">🎲</button>
                 </div>
 
                 <div class="tab-content-box" id="tabContentText"></div>
@@ -411,23 +380,49 @@
         let isHost = false;
         let currentTabId = null;
         
-        // 永続化データの読み込み
+        // 永続化キー
+        const STORAGE_KEY = 'diceTabsSharedData';
+        
+        // 共有データの読み込み（window.storageを使用）
         let tabs = [];
-        const savedData = localStorage.getItem('diceTabsData');
-        if (savedData) {
-            tabs = JSON.parse(savedData);
-        } else {
-            tabs = [
-                { id: 1, title: '運試しサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
-                { id: 2, title: '決断サイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
-                { id: 3, title: 'チャレンジサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] }
-            ];
+        
+        async function loadSharedData() {
+            try {
+                const result = await window.storage.get(STORAGE_KEY, true);
+                if (result && result.value) {
+                    tabs = JSON.parse(result.value);
+                } else {
+                    // 初期データ
+                    tabs = [
+                        { id: 1, title: '運試しサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
+                        { id: 2, title: '決断サイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
+                        { id: 3, title: 'チャレンジサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] }
+                    ];
+                    await saveSharedData();
+                }
+            } catch (error) {
+                console.log('初回読み込み、デフォルトデータを使用');
+                tabs = [
+                    { id: 1, title: '運試しサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
+                    { id: 2, title: '決断サイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
+                    { id: 3, title: 'チャレンジサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] }
+                ];
+            }
+            renderTabs();
         }
         
-        let nextTabId = Math.max(...tabs.map(t => t.id), 0) + 1;
+        async function saveSharedData() {
+            try {
+                await window.storage.set(STORAGE_KEY, JSON.stringify(tabs), true);
+            } catch (error) {
+                console.error('保存エラー:', error);
+            }
+        }
+        
+        let nextTabId = 1;
 
         // 初期化
-        renderTabs();
+        loadSharedData();
 
         function showLoginPage() {
             document.getElementById('homePage').classList.add('hidden');
@@ -460,13 +455,18 @@
             tabs.forEach(tab => {
                 const button = document.createElement('button');
                 button.className = 'tab-button';
-                button.innerHTML = `<div>🎲</div><div>${tab.title}</div>`;
+                button.textContent = tab.title;
                 button.onclick = () => openTab(tab.id);
                 grid.appendChild(button);
             });
+            
+            nextTabId = Math.max(...tabs.map(t => t.id), 0) + 1;
         }
 
-        function openTab(tabId) {
+        async function openTab(tabId) {
+            // 最新データを再読み込み
+            await loadSharedData();
+            
             currentTabId = tabId;
             const tab = tabs.find(t => t.id === tabId);
             
@@ -485,7 +485,6 @@
                 renderDiceLog(tab);
             }
             
-            initializeDice();
             rollAllDice();
         }
 
@@ -496,40 +495,17 @@
             currentTabId = null;
         }
 
-        function initializeDice() {
-            const tab = tabs.find(t => t.id === currentTabId);
-            const container = document.getElementById('diceContainer');
-            container.innerHTML = '';
-            
-            for (let i = 0; i < tab.diceCount; i++) {
-                const dice = document.createElement('div');
-                dice.className = 'dice-small';
-                dice.id = 'dice_' + i;
-                dice.textContent = '?';
-                container.appendChild(dice);
-            }
-        }
-
-        function rollAllDice() {
+        async function rollAllDice() {
             const tab = tabs.find(t => t.id === currentTabId);
             const results = [];
             
             for (let i = 0; i < tab.diceCount; i++) {
-                const dice = document.getElementById('dice_' + i);
-                dice.classList.add('rolling');
-                
-                setTimeout(() => {
-                    const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
-                    dice.textContent = result;
-                    dice.classList.remove('rolling');
-                    results.push(result);
-                    
-                    if (i === tab.diceCount - 1) {
-                        updateDiceLabels(results);
-                        logDiceRoll(results);
-                    }
-                }, 500);
+                const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
+                results.push(result);
             }
+            
+            updateDiceLabels(results);
+            await logDiceRoll(results);
         }
 
         function updateDiceLabels(results) {
@@ -545,7 +521,7 @@
             labelsDiv.textContent = labelParts.join(' ');
         }
 
-        function logDiceRoll(results) {
+        async function logDiceRoll(results) {
             const tab = tabs.find(t => t.id === currentTabId);
             const timestamp = new Date().toLocaleString('ja-JP');
             const ip = '192.168.1.' + Math.floor(Math.random() * 255); // 模擬IP
@@ -563,7 +539,7 @@
                 renderDiceLog(tab);
             }
             
-            saveAllSettings();
+            await saveSharedData();
         }
 
         function renderDiceLog(tab) {
@@ -591,7 +567,7 @@
             });
         }
 
-        function applyTabSettings() {
+        async function applyTabSettings() {
             const tab = tabs.find(t => t.id === currentTabId);
             
             tab.title = document.getElementById('editTabTitle').value;
@@ -605,12 +581,12 @@
             
             document.getElementById('tabContentText').textContent = tab.content || 'このタブには内容がまだ設定されていません。';
             
-            initializeDice();
             rollAllDice();
             renderTabs();
+            await saveSharedData();
         }
 
-        function addNewTab() {
+        async function addNewTab() {
             const title = prompt('新しいタブのタイトルを入力:');
             if (!title) return;
             
@@ -626,20 +602,20 @@
             });
             
             renderTabs();
-            saveAllSettings();
+            await saveSharedData();
         }
 
-        function deleteTab() {
+        async function deleteTab() {
             if (!confirm('このタブを削除しますか？')) return;
             
             tabs = tabs.filter(t => t.id !== currentTabId);
             renderTabs();
             goHome();
-            saveAllSettings();
+            await saveSharedData();
         }
 
-        function saveAllSettings() {
-            localStorage.setItem('diceTabsData', JSON.stringify(tabs));
+        async function saveAllSettings() {
+            await saveSharedData();
             showNotification('💾 設定を保存しました！');
         }
 
