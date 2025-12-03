@@ -15,16 +15,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
         }
 
         .container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         .header {
@@ -62,8 +59,8 @@
         }
 
         .content {
-            padding: 40px;
-            min-height: 500px;
+            padding: 40px 0;
+            min-height: calc(100vh - 60px);
         }
 
         /* ログインページ */
@@ -113,6 +110,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
+            padding: 0 40px;
         }
 
         .tab-button {
@@ -165,28 +163,29 @@
             transition: transform 0.2s;
         }
 
-        .roll-button-bar:hover {
+        .roll-button-bar:hover:not(:disabled) {
             transform: scale(1.1);
+        }
+
+        .roll-button-bar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* タブコンテンツ */
         .tab-content-box {
-            margin: 30px auto;
             padding: 40px;
             background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
             font-size: 1.1em;
             line-height: 1.8;
             color: #333;
             min-height: 200px;
             white-space: pre-wrap;
-            max-width: 100%;
         }
 
         /* ホストコントロール */
         .host-controls {
-            margin: 30px;
+            margin: 30px 40px;
             padding: 25px;
             background: #fff3cd;
             border-radius: 10px;
@@ -206,7 +205,7 @@
             font-weight: bold;
         }
 
-        .host-controls input, .host-controls textarea {
+        .host-controls input, .host-controls textarea, .host-controls select {
             width: 100%;
             padding: 10px;
             border: 2px solid #ffc107;
@@ -301,6 +300,34 @@
                 opacity: 1;
             }
         }
+
+        .list-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .list-item {
+            padding: 5px 10px;
+            background: white;
+            border: 2px solid #ffc107;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .list-item button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -330,7 +357,6 @@
                 <div id="hostHomeControls" class="host-controls hidden">
                     <h3>🔧 ホーム設定</h3>
                     <button onclick="addNewTab()">➕ 新しいタブを追加</button>
-                    <button class="save-btn" onclick="saveAllSettings()">💾 設定を保存</button>
                 </div>
             </div>
 
@@ -338,7 +364,7 @@
             <div id="tabPage" class="hidden">
                 <div class="dice-bar">
                     <div class="dice-labels-bar" id="diceLabels"></div>
-                    <button class="roll-button-bar" onclick="rollAllDice()">🎲</button>
+                    <button class="roll-button-bar" id="rollButton" onclick="rollAllDice()">🎲</button>
                 </div>
 
                 <div class="tab-content-box" id="tabContentText"></div>
@@ -353,76 +379,98 @@
                     <label>タブ内容:</label>
                     <textarea id="editTabContent" placeholder="タブの説明や内容を入力..."></textarea>
                     
-                    <label>サイコロの数:</label>
-                    <input type="number" id="editDiceCount" value="2" min="1" max="10">
+                    <label>タブの種類:</label>
+                    <select id="editTabType" onchange="toggleTabTypeSettings()">
+                        <option value="dice">サイコロ</option>
+                        <option value="list">リスト抽選</option>
+                    </select>
                     
-                    <label>サイコロの範囲（最小）:</label>
-                    <input type="number" id="editDiceMin" value="1" min="0">
+                    <!-- サイコロ設定 -->
+                    <div id="diceSettings">
+                        <label>サイコロの数:</label>
+                        <input type="number" id="editDiceCount" value="2" min="1" max="10">
+                        
+                        <label>サイコロの範囲（最小）:</label>
+                        <input type="number" id="editDiceMin" value="1" min="0">
+                        
+                        <label>サイコロの範囲（最大）:</label>
+                        <input type="number" id="editDiceMax" value="6" min="1">
+                        
+                        <label>サイコロのラベル（カンマ区切り、例: w,x,y,z）:</label>
+                        <input type="text" id="editDiceLabels" value="w,x">
+                    </div>
                     
-                    <label>サイコロの範囲（最大）:</label>
-                    <input type="number" id="editDiceMax" value="6" min="1">
-                    
-                    <label>サイコロのラベル（カンマ区切り、例: w,x,y,z）:</label>
-                    <input type="text" id="editDiceLabels" value="w,x">
+                    <!-- リスト設定 -->
+                    <div id="listSettings" class="hidden">
+                        <label>抽選する数:</label>
+                        <input type="number" id="editListCount" value="1" min="1" max="10">
+                        
+                        <label>リスト項目（Enterで追加）:</label>
+                        <input type="text" id="newListItem" placeholder="項目を入力してEnter">
+                        <div class="list-items" id="listItemsContainer"></div>
+                    </div>
                     
                     <button onclick="applyTabSettings()">設定を適用</button>
-                    <button class="save-btn" onclick="saveAllSettings()">💾 設定を保存</button>
                     <button class="danger-btn" onclick="deleteTab()">🗑️ このタブを削除</button>
                     
-                    <h3 style="margin-top: 30px;">📊 サイコロの記録</h3>
+                    <h3 style="margin-top: 30px;">📊 ロール記録</h3>
                     <div class="dice-log" id="diceLog"></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <script>
+        // Firebase設定（GitHub Pagesにデプロイする際は環境変数または別ファイルで管理してください）
+       const firebaseConfig = {
+           apiKey: "AIzaSyC9NmTiZsDiU4V-Zz0irfAL7xN55Jj9Z9o",
+           authDomain: "dice-c9dc2.firebaseapp.com",
+           databaseURL: "https://dice-c9dc2-default-rtdb.firebaseio.com",
+           projectId: "dice-c9dc2",
+           storageBucket: "dice-c9dc2.firebasestorage.app",
+           messagingSenderId: "1027278685434",
+           appId: "1:1027278685434:web:2d266ea2784910942b3543",
+           measurementId: "G-L9TDVYHQ3P"
+       };
+
+        // Firebase初期化
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
         let isHost = false;
         let currentTabId = null;
-        
-        // 永続化キー
-        const STORAGE_KEY = 'diceTabsSharedData';
-        
-        // 共有データの読み込み（window.storageを使用）
         let tabs = [];
-        
-        async function loadSharedData() {
-            try {
-                const result = await window.storage.get(STORAGE_KEY, true);
-                if (result && result.value) {
-                    tabs = JSON.parse(result.value);
-                } else {
-                    // 初期データ
-                    tabs = [
-                        { id: 1, title: '運試しサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
-                        { id: 2, title: '決断サイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
-                        { id: 3, title: 'チャレンジサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] }
-                    ];
-                    await saveSharedData();
-                }
-            } catch (error) {
-                console.log('初回読み込み、デフォルトデータを使用');
+        let lastRollTime = 0;
+        const ROLL_COOLDOWN = 2000; // 2秒のクールダウン
+
+        // Firebaseからデータを読み込み
+        database.ref('tabs').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                tabs = Object.values(data);
+            } else {
+                // 初期データ
                 tabs = [
-                    { id: 1, title: '運試しサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
-                    { id: 2, title: '決断サイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] },
-                    { id: 3, title: 'チャレンジサイコロ', content: '', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], logs: [] }
+                    { id: 1, title: '運試しサイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listItems: [], listCount: 1 },
+                    { id: 2, title: '決断サイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listItems: [], listCount: 1 },
+                    { id: 3, title: 'チャレンジサイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listItems: [], listCount: 1 }
                 ];
+                saveTabs();
             }
             renderTabs();
-        }
-        
-        async function saveSharedData() {
-            try {
-                await window.storage.set(STORAGE_KEY, JSON.stringify(tabs), true);
-            } catch (error) {
-                console.error('保存エラー:', error);
-            }
-        }
-        
-        let nextTabId = 1;
+        });
 
-        // 初期化
-        loadSharedData();
+        function saveTabs() {
+            const tabsObj = {};
+            tabs.forEach(tab => {
+                tabsObj[tab.id] = tab;
+            });
+            database.ref('tabs').set(tabsObj);
+        }
 
         function showLoginPage() {
             document.getElementById('homePage').classList.add('hidden');
@@ -459,14 +507,9 @@
                 button.onclick = () => openTab(tab.id);
                 grid.appendChild(button);
             });
-            
-            nextTabId = Math.max(...tabs.map(t => t.id), 0) + 1;
         }
 
-        async function openTab(tabId) {
-            // 最新データを再読み込み
-            await loadSharedData();
-            
+        function openTab(tabId) {
             currentTabId = tabId;
             const tab = tabs.find(t => t.id === tabId);
             
@@ -476,17 +519,76 @@
             
             if (isHost) {
                 document.getElementById('hostTabControls').classList.remove('hidden');
-                document.getElementById('editTabTitle').value = tab.title;
-                document.getElementById('editTabContent').value = tab.content;
-                document.getElementById('editDiceCount').value = tab.diceCount;
-                document.getElementById('editDiceMin').value = tab.diceMin;
-                document.getElementById('editDiceMax').value = tab.diceMax;
-                document.getElementById('editDiceLabels').value = tab.labels.join(',');
-                renderDiceLog(tab);
+                loadTabSettings(tab);
+                loadLogs(tab.id);
             }
             
             rollAllDice();
         }
+
+        function loadTabSettings(tab) {
+            document.getElementById('editTabTitle').value = tab.title;
+            document.getElementById('editTabContent').value = tab.content;
+            document.getElementById('editTabType').value = tab.type || 'dice';
+            
+            if (tab.type === 'list') {
+                document.getElementById('editListCount').value = tab.listCount || 1;
+                renderListItems(tab.listItems || []);
+            } else {
+                document.getElementById('editDiceCount').value = tab.diceCount;
+                document.getElementById('editDiceMin').value = tab.diceMin;
+                document.getElementById('editDiceMax').value = tab.diceMax;
+                document.getElementById('editDiceLabels').value = tab.labels.join(',');
+            }
+            
+            toggleTabTypeSettings();
+        }
+
+        function toggleTabTypeSettings() {
+            const type = document.getElementById('editTabType').value;
+            if (type === 'dice') {
+                document.getElementById('diceSettings').classList.remove('hidden');
+                document.getElementById('listSettings').classList.add('hidden');
+            } else {
+                document.getElementById('diceSettings').classList.add('hidden');
+                document.getElementById('listSettings').classList.remove('hidden');
+            }
+        }
+
+        function renderListItems(items) {
+            const container = document.getElementById('listItemsContainer');
+            container.innerHTML = '';
+            items.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    <span>${item}</span>
+                    <button onclick="removeListItem(${index})">×</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeListItem(index) {
+            const tab = tabs.find(t => t.id === currentTabId);
+            tab.listItems.splice(index, 1);
+            renderListItems(tab.listItems);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('newListItem').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const value = e.target.value.trim();
+                    if (value) {
+                        const tab = tabs.find(t => t.id === currentTabId);
+                        if (!tab.listItems) tab.listItems = [];
+                        tab.listItems.push(value);
+                        renderListItems(tab.listItems);
+                        e.target.value = '';
+                    }
+                }
+            });
+        });
 
         function goHome() {
             document.getElementById('tabPage').classList.add('hidden');
@@ -495,128 +597,147 @@
             currentTabId = null;
         }
 
-        async function rollAllDice() {
-            const tab = tabs.find(t => t.id === currentTabId);
-            const results = [];
-            
-            for (let i = 0; i < tab.diceCount; i++) {
-                const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
-                results.push(result);
+        function rollAllDice() {
+            const now = Date.now();
+            if (now - lastRollTime < ROLL_COOLDOWN) {
+                const remaining = Math.ceil((ROLL_COOLDOWN - (now - lastRollTime)) / 1000);
+                showNotification(`あと${remaining}秒待ってください`);
+                return;
             }
             
-            updateDiceLabels(results);
-            await logDiceRoll(results);
-        }
-
-        function updateDiceLabels(results) {
-            const tab = tabs.find(t => t.id === currentTabId);
-            const labelsDiv = document.getElementById('diceLabels');
-            const labelParts = [];
+            lastRollTime = now;
+            const rollButton = document.getElementById('rollButton');
+            rollButton.disabled = true;
             
-            for (let i = 0; i < results.length; i++) {
-                const label = tab.labels[i] || String.fromCharCode(119 + i); // w, x, y, z...
-                labelParts.push(`${label}:${results[i]}`);
+            setTimeout(() => {
+                rollButton.disabled = false;
+            }, ROLL_COOLDOWN);
+            
+            const tab = tabs.find(t => t.id === currentTabId);
+            let results = [];
+            
+            if (tab.type === 'list') {
+                // リスト抽選
+                const count = Math.min(tab.listCount || 1, tab.listItems.length);
+                const shuffled = [...tab.listItems].sort(() => Math.random() - 0.5);
+                results = shuffled.slice(0, count);
+                document.getElementById('diceLabels').textContent = results.join(', ');
+            } else {
+                // サイコロ
+                for (let i = 0; i < tab.diceCount; i++) {
+                    const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
+                    results.push(result);
+                }
+                
+                const labelParts = [];
+                for (let i = 0; i < results.length; i++) {
+                    const label = tab.labels[i] || String.fromCharCode(119 + i);
+                    labelParts.push(`${label}:${results[i]}`);
+                }
+                document.getElementById('diceLabels').textContent = labelParts.join(' ');
             }
             
-            labelsDiv.textContent = labelParts.join(' ');
+            logRoll(results);
         }
 
-        async function logDiceRoll(results) {
-            const tab = tabs.find(t => t.id === currentTabId);
+        function logRoll(results) {
             const timestamp = new Date().toLocaleString('ja-JP');
-            const ip = '192.168.1.' + Math.floor(Math.random() * 255); // 模擬IP
+            const ip = '192.168.1.' + Math.floor(Math.random() * 255);
             
             const logEntry = {
                 timestamp,
                 ip,
-                results: [...results]
+                results: results,
+                tabId: currentTabId
             };
             
-            tab.logs.unshift(logEntry);
-            if (tab.logs.length > 100) tab.logs.pop(); // 最大100件
-            
-            if (isHost) {
-                renderDiceLog(tab);
-            }
-            
-            await saveSharedData();
+            database.ref('logs/' + currentTabId).push(logEntry);
         }
 
-        function renderDiceLog(tab) {
-            const logDiv = document.getElementById('diceLog');
-            logDiv.innerHTML = '';
-            
-            if (tab.logs.length === 0) {
-                logDiv.innerHTML = '<p style="color: #999;">まだ記録がありません</p>';
-                return;
-            }
-            
-            tab.logs.forEach(log => {
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                const resultLabels = log.results.map((r, i) => {
-                    const label = tab.labels[i] || String.fromCharCode(119 + i);
-                    return `${label}:${r}`;
-                }).join(' ');
-                entry.innerHTML = `
-                    <strong>${log.timestamp}</strong><br>
-                    IP: ${log.ip}<br>
-                    結果: ${resultLabels}
-                `;
-                logDiv.appendChild(entry);
+        function loadLogs(tabId) {
+            database.ref('logs/' + tabId).limitToLast(100).on('value', (snapshot) => {
+                const logDiv = document.getElementById('diceLog');
+                logDiv.innerHTML = '';
+                
+                const logs = [];
+                snapshot.forEach((child) => {
+                    logs.push(child.val());
+                });
+                
+                if (logs.length === 0) {
+                    logDiv.innerHTML = '<p style="color: #999;">まだ記録がありません</p>';
+                    return;
+                }
+                
+                logs.reverse().forEach(log => {
+                    const entry = document.createElement('div');
+                    entry.className = 'log-entry';
+                    const resultText = Array.isArray(log.results) ? log.results.join(', ') : log.results;
+                    entry.innerHTML = `
+                        <strong>${log.timestamp}</strong><br>
+                        IP: ${log.ip}<br>
+                        結果: ${resultText}
+                    `;
+                    logDiv.appendChild(entry);
+                });
             });
         }
 
-        async function applyTabSettings() {
+        function applyTabSettings() {
             const tab = tabs.find(t => t.id === currentTabId);
             
             tab.title = document.getElementById('editTabTitle').value;
             tab.content = document.getElementById('editTabContent').value;
-            tab.diceCount = parseInt(document.getElementById('editDiceCount').value);
-            tab.diceMin = parseInt(document.getElementById('editDiceMin').value);
-            tab.diceMax = parseInt(document.getElementById('editDiceMax').value);
+            tab.type = document.getElementById('editTabType').value;
             
-            const labelsInput = document.getElementById('editDiceLabels').value;
-            tab.labels = labelsInput.split(',').map(l => l.trim()).filter(l => l);
+            if (tab.type === 'list') {
+                tab.listCount = parseInt(document.getElementById('editListCount').value);
+            } else {
+                tab.diceCount = parseInt(document.getElementById('editDiceCount').value);
+                tab.diceMin = parseInt(document.getElementById('editDiceMin').value);
+                tab.diceMax = parseInt(document.getElementById('editDiceMax').value);
+                
+                const labelsInput = document.getElementById('editDiceLabels').value;
+                tab.labels = labelsInput.split(',').map(l => l.trim()).filter(l => l);
+            }
             
             document.getElementById('tabContentText').textContent = tab.content || 'このタブには内容がまだ設定されていません。';
             
+            saveTabs();
             rollAllDice();
-            renderTabs();
-            await saveSharedData();
+            showNotification('設定を保存しました！');
         }
 
-        async function addNewTab() {
+        function addNewTab() {
             const title = prompt('新しいタブのタイトルを入力:');
             if (!title) return;
             
+            const newId = Math.max(...tabs.map(t => t.id), 0) + 1;
             tabs.push({
-                id: nextTabId++,
+                id: newId,
                 title: title,
                 content: '',
+                type: 'dice',
                 diceCount: 2,
                 diceMin: 1,
                 diceMax: 6,
                 labels: ['w', 'x'],
-                logs: []
+                listItems: [],
+                listCount: 1
             });
             
-            renderTabs();
-            await saveSharedData();
+            saveTabs();
+            showNotification('タブを追加しました！');
         }
 
-        async function deleteTab() {
+        function deleteTab() {
             if (!confirm('このタブを削除しますか？')) return;
             
             tabs = tabs.filter(t => t.id !== currentTabId);
-            renderTabs();
+            database.ref('logs/' + currentTabId).remove();
+            saveTabs();
             goHome();
-            await saveSharedData();
-        }
-
-        async function saveAllSettings() {
-            await saveSharedData();
-            showNotification('💾 設定を保存しました！');
+            showNotification('タブを削除しました！');
         }
 
         function showNotification(message) {
