@@ -27,14 +27,14 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 30px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .header h1 {
-            font-size: 1.8em;
+            font-size: 1.5em;
             cursor: pointer;
             transition: opacity 0.3s;
         }
@@ -59,25 +59,25 @@
         }
 
         .content {
-            padding: 40px 0;
+            padding: 20px 0;
             min-height: calc(100vh - 60px);
         }
 
         /* ログインページ */
         .login-page {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
         }
 
         .login-page h2 {
             color: #667eea;
             margin-bottom: 30px;
-            font-size: 2em;
+            font-size: 1.8em;
         }
 
         .login-page input {
             padding: 15px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             border: 2px solid #667eea;
             border-radius: 10px;
             width: 100%;
@@ -86,8 +86,8 @@
         }
 
         .login-page button {
-            padding: 15px 40px;
-            font-size: 1.2em;
+            padding: 15px 30px;
+            font-size: 1.1em;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -108,19 +108,27 @@
         /* ホーム画面 */
         .tabs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 0 40px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 0 20px;
+        }
+
+        @media (min-width: 768px) {
+            .tabs-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+                padding: 0 40px;
+            }
         }
 
         .tab-button {
-            padding: 50px 20px;
+            padding: 40px 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 15px;
             cursor: pointer;
-            font-size: 1.5em;
+            font-size: 1.3em;
             font-weight: bold;
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
@@ -131,24 +139,39 @@
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
         }
 
+        @media (min-width: 768px) {
+            .tab-button {
+                padding: 50px 20px;
+                font-size: 1.5em;
+            }
+        }
+
         /* 固定サイコロバー */
         .dice-bar {
             position: sticky;
             top: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             z-index: 100;
-            padding: 15px 30px;
+            padding: 15px 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 30px;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .dice-labels-bar {
             color: white;
-            font-size: 1.5em;
+            font-size: 1.2em;
             font-weight: bold;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .dice-labels-bar {
+                font-size: 1.5em;
+            }
         }
 
         .roll-button-bar {
@@ -172,30 +195,53 @@
             cursor: not-allowed;
         }
 
+        .rolling-animation {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
         /* タブコンテンツ */
         .tab-content-box {
-            padding: 40px;
+            padding: 30px 20px;
             background: #f8f9fa;
-            font-size: 1.1em;
+            font-size: 1em;
             line-height: 1.8;
             color: #333;
             min-height: 200px;
             white-space: pre-wrap;
         }
 
+        @media (min-width: 768px) {
+            .tab-content-box {
+                padding: 40px;
+                font-size: 1.1em;
+            }
+        }
+
         /* ホストコントロール */
         .host-controls {
-            margin: 30px 40px;
-            padding: 25px;
+            margin: 20px;
+            padding: 20px;
             background: #fff3cd;
             border-radius: 10px;
             border: 2px solid #ffc107;
         }
 
+        @media (min-width: 768px) {
+            .host-controls {
+                margin: 30px 40px;
+                padding: 25px;
+            }
+        }
+
         .host-controls h3 {
             color: #856404;
-            margin-bottom: 20px;
-            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-size: 1.2em;
         }
 
         .host-controls label {
@@ -203,6 +249,7 @@
             margin: 15px 0 5px 0;
             color: #856404;
             font-weight: bold;
+            font-size: 0.95em;
         }
 
         .host-controls input, .host-controls textarea, .host-controls select {
@@ -216,20 +263,20 @@
         }
 
         .host-controls textarea {
-            min-height: 150px;
+            min-height: 120px;
             resize: vertical;
         }
 
         .host-controls button {
-            padding: 12px 30px;
+            padding: 10px 20px;
             background: #ffc107;
             color: #856404;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 0.95em;
             font-weight: bold;
-            margin: 10px 10px 0 0;
+            margin: 10px 5px 0 0;
         }
 
         .host-controls button:hover {
@@ -283,11 +330,12 @@
             right: 20px;
             background: #28a745;
             color: white;
-            padding: 15px 30px;
+            padding: 15px 20px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             z-index: 1000;
             animation: slideIn 0.3s ease-out;
+            font-size: 0.9em;
         }
 
         @keyframes slideIn {
@@ -301,21 +349,42 @@
             }
         }
 
+        .list-group {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .list-group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .list-group-title {
+            font-weight: bold;
+            color: #856404;
+            font-size: 1.1em;
+        }
+
         .list-items {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             margin-top: 10px;
         }
 
         .list-item {
             padding: 5px 10px;
-            background: white;
+            background: #f8f9fa;
             border: 2px solid #ffc107;
             border-radius: 5px;
             display: flex;
             align-items: center;
             gap: 5px;
+            font-size: 0.9em;
         }
 
         .list-item button {
@@ -362,7 +431,7 @@
 
             <!-- タブページ -->
             <div id="tabPage" class="hidden">
-                <div class="dice-bar">
+                <div class="dice-bar" id="diceBarContainer">
                     <div class="dice-labels-bar" id="diceLabels"></div>
                     <button class="roll-button-bar" id="rollButton" onclick="rollAllDice()">🎲</button>
                 </div>
@@ -402,12 +471,8 @@
                     
                     <!-- リスト設定 -->
                     <div id="listSettings" class="hidden">
-                        <label>抽選する数:</label>
-                        <input type="number" id="editListCount" value="1" min="1" max="10">
-                        
-                        <label>リスト項目（Enterで追加）:</label>
-                        <input type="text" id="newListItem" placeholder="項目を入力してEnter">
-                        <div class="list-items" id="listItemsContainer"></div>
+                        <button onclick="addListGroup()">➕ 新しいリスト項目を追加</button>
+                        <div id="listGroupsContainer"></div>
                     </div>
                     
                     <button onclick="applyTabSettings()">設定を適用</button>
@@ -425,8 +490,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <script>
-        // Firebase設定（GitHub Pagesにデプロイする際は環境変数または別ファイルで管理してください）
-       const firebaseConfig = {
+        // Firebase設定（自分の設定に置き換えてください）
+        const firebaseConfig = {
            apiKey: "AIzaSyC9NmTiZsDiU4V-Zz0irfAL7xN55Jj9Z9o",
            authDomain: "dice-c9dc2.firebaseapp.com",
            databaseURL: "https://dice-c9dc2-default-rtdb.firebaseio.com",
@@ -455,13 +520,21 @@
             } else {
                 // 初期データ
                 tabs = [
-                    { id: 1, title: '運試しサイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listItems: [], listCount: 1 },
-                    { id: 2, title: '決断サイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listItems: [], listCount: 1 },
-                    { id: 3, title: 'チャレンジサイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listItems: [], listCount: 1 }
+                    { id: 1, title: '運試しサイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listGroups: [] },
+                    { id: 2, title: '決断サイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listGroups: [] },
+                    { id: 3, title: 'チャレンジサイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listGroups: [] }
                 ];
                 saveTabs();
             }
             renderTabs();
+            
+            // 現在のタブが開かれている場合は更新
+            if (currentTabId) {
+                const tab = tabs.find(t => t.id === currentTabId);
+                if (tab && isHost) {
+                    renderListGroups(tab.listGroups || []);
+                }
+            }
         });
 
         function saveTabs() {
@@ -515,6 +588,14 @@
             
             document.getElementById('homePage').classList.add('hidden');
             document.getElementById('tabPage').classList.remove('hidden');
+            
+            // タブの種類によって表示を切り替え
+            if (tab.type === 'list') {
+                document.getElementById('diceBarContainer').classList.add('hidden');
+            } else {
+                document.getElementById('diceBarContainer').classList.remove('hidden');
+            }
+            
             document.getElementById('tabContentText').textContent = tab.content || 'このタブには内容がまだ設定されていません。';
             
             if (isHost) {
@@ -532,8 +613,7 @@
             document.getElementById('editTabType').value = tab.type || 'dice';
             
             if (tab.type === 'list') {
-                document.getElementById('editListCount').value = tab.listCount || 1;
-                renderListItems(tab.listItems || []);
+                renderListGroups(tab.listGroups || []);
             } else {
                 document.getElementById('editDiceCount').value = tab.diceCount;
                 document.getElementById('editDiceMin').value = tab.diceMin;
@@ -555,40 +635,104 @@
             }
         }
 
-        function renderListItems(items) {
-            const container = document.getElementById('listItemsContainer');
+        function renderListGroups(listGroups) {
+            const container = document.getElementById('listGroupsContainer');
             container.innerHTML = '';
-            items.forEach((item, index) => {
+            
+            listGroups.forEach((group, groupIndex) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'list-group';
+                groupDiv.innerHTML = `
+                    <div class="list-group-header">
+                        <input type="text" value="${group.name}" 
+                               onchange="updateListGroupName(${groupIndex}, this.value)"
+                               style="flex: 1; margin-right: 10px; padding: 5px; border: 2px solid #ffc107; border-radius: 5px;">
+                        <button onclick="deleteListGroup(${groupIndex})" 
+                                style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                            削除
+                        </button>
+                    </div>
+                    <label style="font-size: 0.9em; color: #856404;">抽選する数:</label>
+                    <input type="number" value="${group.count}" min="1" max="10"
+                           onchange="updateListGroupCount(${groupIndex}, this.value)"
+                           style="width: 100%; padding: 5px; border: 2px solid #ffc107; border-radius: 5px; margin-bottom: 10px;">
+                    <input type="text" placeholder="項目を入力してEnter" 
+                           onkeypress="handleListItemAdd(event, ${groupIndex})"
+                           style="width: 100%; padding: 8px; border: 2px solid #ffc107; border-radius: 5px; margin-bottom: 5px;">
+                    <div class="list-items" id="listItems${groupIndex}"></div>
+                `;
+                container.appendChild(groupDiv);
+                
+                // アイテムをレンダリング
+                renderListItems(groupIndex, group.items || []);
+            });
+        }
+
+        function renderListItems(groupIndex, items) {
+            const container = document.getElementById('listItems' + groupIndex);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            items.forEach((item, itemIndex) => {
                 const div = document.createElement('div');
                 div.className = 'list-item';
                 div.innerHTML = `
                     <span>${item}</span>
-                    <button onclick="removeListItem(${index})">×</button>
+                    <button onclick="removeListItem(${groupIndex}, ${itemIndex})">×</button>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function removeListItem(index) {
+        function addListGroup() {
             const tab = tabs.find(t => t.id === currentTabId);
-            tab.listItems.splice(index, 1);
-            renderListItems(tab.listItems);
+            if (!tab.listGroups) tab.listGroups = [];
+            
+            tab.listGroups.push({
+                name: 'リスト抽選' + (tab.listGroups.length + 1),
+                count: 1,
+                items: []
+            });
+            
+            renderListGroups(tab.listGroups);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('newListItem').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const value = e.target.value.trim();
-                    if (value) {
-                        const tab = tabs.find(t => t.id === currentTabId);
-                        if (!tab.listItems) tab.listItems = [];
-                        tab.listItems.push(value);
-                        renderListItems(tab.listItems);
-                        e.target.value = '';
+        function deleteListGroup(groupIndex) {
+            const tab = tabs.find(t => t.id === currentTabId);
+            tab.listGroups.splice(groupIndex, 1);
+            renderListGroups(tab.listGroups);
+        }
+
+        function updateListGroupName(groupIndex, name) {
+            const tab = tabs.find(t => t.id === currentTabId);
+            tab.listGroups[groupIndex].name = name;
+        }
+
+        function updateListGroupCount(groupIndex, count) {
+            const tab = tabs.find(t => t.id === currentTabId);
+            tab.listGroups[groupIndex].count = parseInt(count);
+        }
+
+        function handleListItemAdd(event, groupIndex) {
+            if (event.key === 'Enter') {
+                const value = event.target.value.trim();
+                if (value) {
+                    const tab = tabs.find(t => t.id === currentTabId);
+                    if (!tab.listGroups[groupIndex].items) {
+                        tab.listGroups[groupIndex].items = [];
                     }
+                    tab.listGroups[groupIndex].items.push(value);
+                    renderListItems(groupIndex, tab.listGroups[groupIndex].items);
+                    event.target.value = '';
                 }
-            });
-        });
+            }
+        }
+
+        function removeListItem(groupIndex, itemIndex) {
+            const tab = tabs.find(t => t.id === currentTabId);
+            tab.listGroups[groupIndex].items.splice(itemIndex, 1);
+            renderListItems(groupIndex, tab.listGroups[groupIndex].items);
+        }
 
         function goHome() {
             document.getElementById('tabPage').classList.add('hidden');
@@ -607,40 +751,60 @@
             
             lastRollTime = now;
             const rollButton = document.getElementById('rollButton');
-            rollButton.disabled = true;
-            
-            setTimeout(() => {
-                rollButton.disabled = false;
-            }, ROLL_COOLDOWN);
+            if (rollButton) rollButton.disabled = true;
             
             const tab = tabs.find(t => t.id === currentTabId);
             let results = [];
+            let displayText = '';
             
             if (tab.type === 'list') {
-                // リスト抽選
-                const count = Math.min(tab.listCount || 1, tab.listItems.length);
-                const shuffled = [...tab.listItems].sort(() => Math.random() - 0.5);
-                results = shuffled.slice(0, count);
-                document.getElementById('diceLabels').textContent = results.join(', ');
-            } else {
-                // サイコロ
-                for (let i = 0; i < tab.diceCount; i++) {
-                    const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
-                    results.push(result);
-                }
+                // リスト抽選 - 文章表示位置に結果を表示
+                const contentBox = document.getElementById('tabContentText');
+                contentBox.textContent = '抽選中...';
                 
-                const labelParts = [];
-                for (let i = 0; i < results.length; i++) {
-                    const label = tab.labels[i] || String.fromCharCode(119 + i);
-                    labelParts.push(`${label}:${results[i]}`);
-                }
-                document.getElementById('diceLabels').textContent = labelParts.join(' ');
+                setTimeout(() => {
+                    const resultParts = [];
+                    tab.listGroups.forEach(group => {
+                        const count = Math.min(group.count || 1, group.items.length);
+                        const shuffled = [...group.items].sort(() => Math.random() - 0.5);
+                        const selected = shuffled.slice(0, count);
+                        resultParts.push(`【${group.name}】\n${selected.join(', ')}`);
+                        results.push(...selected);
+                    });
+                    displayText = resultParts.join('\n\n');
+                    contentBox.textContent = displayText;
+                    logRoll(results, displayText);
+                }, 500);
+            } else {
+                // サイコロ - 上部バーに表示
+                const labelsDiv = document.getElementById('diceLabels');
+                labelsDiv.textContent = 'ロール中...';
+                labelsDiv.classList.add('rolling-animation');
+                
+                setTimeout(() => {
+                    for (let i = 0; i < tab.diceCount; i++) {
+                        const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
+                        results.push(result);
+                    }
+                    
+                    const labelParts = [];
+                    for (let i = 0; i < results.length; i++) {
+                        const label = tab.labels[i] || String.fromCharCode(119 + i);
+                        labelParts.push(`${label}:${results[i]}`);
+                    }
+                    displayText = labelParts.join(' ');
+                    labelsDiv.textContent = displayText;
+                    labelsDiv.classList.remove('rolling-animation');
+                    logRoll(results, displayText);
+                }, 500);
             }
             
-            logRoll(results);
+            setTimeout(() => {
+                if (rollButton) rollButton.disabled = false;
+            }, ROLL_COOLDOWN);
         }
 
-        function logRoll(results) {
+        function logRoll(results, displayText) {
             const timestamp = new Date().toLocaleString('ja-JP');
             const ip = '192.168.1.' + Math.floor(Math.random() * 255);
             
@@ -648,6 +812,7 @@
                 timestamp,
                 ip,
                 results: results,
+                display: displayText,
                 tabId: currentTabId
             };
             
@@ -672,7 +837,7 @@
                 logs.reverse().forEach(log => {
                     const entry = document.createElement('div');
                     entry.className = 'log-entry';
-                    const resultText = Array.isArray(log.results) ? log.results.join(', ') : log.results;
+                    const resultText = log.display || (Array.isArray(log.results) ? log.results.join(', ') : log.results);
                     entry.innerHTML = `
                         <strong>${log.timestamp}</strong><br>
                         IP: ${log.ip}<br>
@@ -690,9 +855,7 @@
             tab.content = document.getElementById('editTabContent').value;
             tab.type = document.getElementById('editTabType').value;
             
-            if (tab.type === 'list') {
-                tab.listCount = parseInt(document.getElementById('editListCount').value);
-            } else {
+            if (tab.type === 'dice') {
                 tab.diceCount = parseInt(document.getElementById('editDiceCount').value);
                 tab.diceMin = parseInt(document.getElementById('editDiceMin').value);
                 tab.diceMax = parseInt(document.getElementById('editDiceMax').value);
@@ -702,6 +865,13 @@
             }
             
             document.getElementById('tabContentText').textContent = tab.content || 'このタブには内容がまだ設定されていません。';
+            
+            // タブの種類によって表示を切り替え
+            if (tab.type === 'list') {
+                document.getElementById('diceBarContainer').classList.add('hidden');
+            } else {
+                document.getElementById('diceBarContainer').classList.remove('hidden');
+            }
             
             saveTabs();
             rollAllDice();
@@ -722,8 +892,7 @@
                 diceMin: 1,
                 diceMax: 6,
                 labels: ['w', 'x'],
-                listItems: [],
-                listCount: 1
+                listGroups: []
             });
             
             saveTabs();
@@ -750,6 +919,3 @@
                 notification.remove();
             }, 3000);
         }
-    </script>
-</body>
-</html>
