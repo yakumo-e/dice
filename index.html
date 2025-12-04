@@ -528,13 +528,7 @@
             }
             renderTabs();
             
-            // 現在のタブが開かれている場合は更新
-            if (currentTabId) {
-                const tab = tabs.find(t => t.id === currentTabId);
-                if (tab && isHost) {
-                    renderListGroups(tab.listGroups || []);
-                }
-            }
+        
         });
 
         function saveTabs() {
