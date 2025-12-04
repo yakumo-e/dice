@@ -397,6 +397,173 @@
             font-size: 0.8em;
             margin: 0;
         }
+
+        /* 画像投稿 */
+        .image-upload-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px;
+            border: 2px solid #667eea;
+        }
+
+        .image-upload-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .image-upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .image-upload-form input[type="file"] {
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+        }
+
+        .image-upload-form select {
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .image-upload-form button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .image-upload-form button:hover {
+            background: #5568d3;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .image-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .image-card.locked {
+            border-color: #dc3545;
+        }
+
+        .image-card.unlocked {
+            border-color: #28a745;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: blur(20px);
+        }
+
+        .image-preview.unlocked {
+            filter: none;
+        }
+
+        .image-card-info {
+            padding: 15px;
+        }
+
+        .image-timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        .image-timer.unlocked {
+            color: #28a745;
+        }
+
+        .host-image-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .host-image-controls button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .host-image-controls .view-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .host-image-controls .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .host-image-controls .edit-btn {
+            background: #ffc107;
+            color: #856404;
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -438,6 +605,36 @@
 
                 <div class="tab-content-box" id="tabContentText"></div>
 
+                <!-- 画像投稿セクション -->
+                <div id="imageSection" class="hidden">
+                    <div class="image-upload-section">
+                        <h3>📸 画像をアップロード</h3>
+                        <div class="image-upload-form">
+                            <input type="file" id="imageFileInput" accept="image/*">
+                            <label>ロック時間:</label>
+                            <select id="imageLockTime">
+                                <option value="10">10分</option>
+                                <option value="20">20分</option>
+                                <option value="30">30分</option>
+                                <option value="60">1時間</option>
+                                <option value="120">2時間</option>
+                                <option value="180">3時間</option>
+                                <option value="360">6時間</option>
+                                <option value="720">12時間</option>
+                                <option value="1440">24時間</option>
+                            </select>
+                            <button onclick="uploadImage()">アップロード</button>
+                        </div>
+                    </div>
+                    <div class="image-gallery" id="imageGallery"></div>
+                </div>
+
+                <!-- 画像モーダル -->
+                <div id="imageModal" class="image-modal">
+                    <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+                    <img id="imageModalImg" class="image-modal-content">
+                </div>
+
                 <!-- ホスト設定 - タブ -->
                 <div id="hostTabControls" class="host-controls hidden">
                     <h3>🔧 タブ設定</h3>
@@ -452,6 +649,7 @@
                     <select id="editTabType" onchange="toggleTabTypeSettings()">
                         <option value="dice">サイコロ</option>
                         <option value="list">リスト抽選</option>
+                        <option value="image">画像投稿</option>
                     </select>
                     
                     <!-- サイコロ設定 -->
@@ -473,6 +671,11 @@
                     <div id="listSettings" class="hidden">
                         <button onclick="addListGroup()">➕ 新しいリスト項目を追加</button>
                         <div id="listGroupsContainer"></div>
+                    </div>
+
+                    <!-- 画像投稿設定 -->
+                    <div id="imageSettings" class="hidden">
+                        <p style="color: #856404; margin-bottom: 10px;">ユーザーは画像をアップロードし、ロック時間を設定できます。</p>
                     </div>
                     
                     <button onclick="applyTabSettings()">設定を適用</button>
@@ -597,8 +800,18 @@
             // タブの種類によって表示を切り替え
             if (tab.type === 'list') {
                 document.getElementById('diceBarContainer').classList.add('hidden');
+                document.getElementById('tabContentText').classList.remove('hidden');
+                document.getElementById('imageSection').classList.add('hidden');
+            } else if (tab.type === 'image') {
+                document.getElementById('diceBarContainer').classList.add('hidden');
+                document.getElementById('tabContentText').classList.add('hidden');
+                document.getElementById('imageSection').classList.remove('hidden');
+                loadImages();
+                startImageTimer();
             } else {
                 document.getElementById('diceBarContainer').classList.remove('hidden');
+                document.getElementById('tabContentText').classList.remove('hidden');
+                document.getElementById('imageSection').classList.add('hidden');
             }
             
             document.getElementById('tabContentText').textContent = tab.content || 'このタブには内容がまだ設定されていません。';
@@ -608,8 +821,10 @@
                 loadTabSettings(tab);
                 loadLogs(tab.id);
             }
-            
-            rollAllDice();
+
+            if (tab.type !== 'image') {
+                rollAllDice();
+            }
         }
 
         function loadTabSettings(tab) {
@@ -634,9 +849,15 @@
             if (type === 'dice') {
                 document.getElementById('diceSettings').classList.remove('hidden');
                 document.getElementById('listSettings').classList.add('hidden');
-            } else {
+                document.getElementById('imageSettings').classList.add('hidden');
+            } else if (type === 'list') {
                 document.getElementById('diceSettings').classList.add('hidden');
                 document.getElementById('listSettings').classList.remove('hidden');
+                document.getElementById('imageSettings').classList.add('hidden');
+            } else {
+                document.getElementById('diceSettings').classList.add('hidden');
+                document.getElementById('listSettings').classList.add('hidden');
+                document.getElementById('imageSettings').classList.remove('hidden');
             }
         }
 
@@ -744,6 +965,10 @@
             document.getElementById('homePage').classList.remove('hidden');
             document.getElementById('loginPage').classList.add('hidden');
             currentTabId = null;
+            if (imageTimerInterval) {
+                clearInterval(imageTimerInterval);
+                imageTimerInterval = null;
+            }
         }
 
         function rollAllDice() {
@@ -932,7 +1157,10 @@
             const title = prompt('新しいタブのタイトルを入力:');
             if (!title) return;
             
-            const type = confirm('サイコロタブを作成しますか？\n（キャンセルでリスト抽選タブ）') ? 'dice' : 'list';
+            const typeChoice = prompt('タブの種類を選択:\n1: サイコロ\n2: リスト抽選\n3: 画像投稿', '1');
+            let type = 'dice';
+            if (typeChoice === '2') type = 'list';
+            if (typeChoice === '3') type = 'image';
             
             const newId = tabs.length > 0 ? Math.max(...tabs.map(t => t.id)) + 1 : 1;
             tabs.push({
