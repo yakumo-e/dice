@@ -196,7 +196,7 @@
         }
 
         .rolling-animation {
-            animation: pulse 2s ease-in-out;
+            animation: pulse 0.5s ease-in-out;
         }
 
         @keyframes pulse {
@@ -490,8 +490,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <script>
-        // Firebase設定（GitHub Pagesにデプロイする際は環境変数または別ファイルで管理してください）
-       const firebaseConfig = {
+        // Firebase設定（自分の設定に置き換えてください）
+        const firebaseConfig = {
            apiKey: "AIzaSyC9NmTiZsDiU4V-Zz0irfAL7xN55Jj9Z9o",
            authDomain: "dice-c9dc2.firebaseapp.com",
            databaseURL: "https://dice-c9dc2-default-rtdb.firebaseio.com",
@@ -518,16 +518,11 @@
             if (data) {
                 tabs = Object.values(data);
             } else {
-                // 初期データ
-                tabs = [
-                    { id: 1, title: '運試しサイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listGroups: [] },
-                    { id: 2, title: '決断サイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listGroups: [] },
-                    { id: 3, title: 'チャレンジサイコロ', content: '', type: 'dice', diceCount: 2, diceMin: 1, diceMax: 6, labels: ['w', 'x'], listGroups: [] }
-                ];
-                saveTabs();
+                // 初期データは空
+                tabs = [];
             }
             renderTabs();
-
+            
             // 現在のタブが開かれている場合は更新
             if (currentTabId) {
                 const tab = tabs.find(t => t.id === currentTabId);
@@ -538,11 +533,16 @@
         });
 
         function saveTabs() {
-            const tabsObj = {};
-            tabs.forEach(tab => {
-                tabsObj[tab.id] = tab;
-            });
-            database.ref('tabs').set(tabsObj);
+            if (tabs.length === 0) {
+                // タブが空の場合はFirebaseから削除
+                database.ref('tabs').remove();
+            } else {
+                const tabsObj = {};
+                tabs.forEach(tab => {
+                    tabsObj[tab.id] = tab;
+                });
+                database.ref('tabs').set(tabsObj);
+            }
         }
 
         function showLoginPage() {
@@ -573,6 +573,11 @@
             const grid = document.getElementById('tabsGrid');
             grid.innerHTML = '';
             
+            if (tabs.length === 0 && !isHost) {
+                grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #666;">タブがまだ作成されていません</p>';
+                return;
+            }
+            
             tabs.forEach(tab => {
                 const button = document.createElement('button');
                 button.className = 'tab-button';
@@ -588,14 +593,14 @@
             
             document.getElementById('homePage').classList.add('hidden');
             document.getElementById('tabPage').classList.remove('hidden');
-
+            
             // タブの種類によって表示を切り替え
             if (tab.type === 'list') {
                 document.getElementById('diceBarContainer').classList.add('hidden');
             } else {
                 document.getElementById('diceBarContainer').classList.remove('hidden');
             }
-
+            
             document.getElementById('tabContentText').textContent = tab.content || 'このタブには内容がまだ設定されていません。';
             
             if (isHost) {
@@ -671,13 +676,14 @@
         function renderListItems(groupIndex, items) {
             const container = document.getElementById('listItems' + groupIndex);
             if (!container) return;
+            
             container.innerHTML = '';
             items.forEach((item, itemIndex) => {
                 const div = document.createElement('div');
                 div.className = 'list-item';
                 div.innerHTML = `
                     <span>${item}</span>
-                    <button onclick="removeListItem(${groupIndex},${itemIndex})">×</button>
+                    <button onclick="removeListItem(${groupIndex}, ${itemIndex})">×</button>
                 `;
                 container.appendChild(div);
             });
@@ -757,45 +763,90 @@
             let displayText = '';
             
             if (tab.type === 'list') {
-                // リスト抽選 - 文章表示位置に結果を表示
+                // リスト抽選 - アニメーション付き
                 const contentBox = document.getElementById('tabContentText');
-                contentBox.textContent = '抽選中...';
                 
-                setTimeout(() => {
-                    const resultParts = [];
+                // 2秒間ランダムに選択肢を表示
+                const animationDuration = 2000;
+                const animationInterval = 100;
+                let animationElapsed = 0;
+                
+                const animationTimer = setInterval(() => {
+                    const tempResults = [];
                     tab.listGroups.forEach(group => {
                         const count = Math.min(group.count || 1, group.items.length);
                         const shuffled = [...group.items].sort(() => Math.random() - 0.5);
                         const selected = shuffled.slice(0, count);
-                        resultParts.push(`【${group.name}】\n${selected.join(', ')}`);
-                        results.push(...selected);
+                        tempResults.push(`【${group.name}】\n${selected.join(', ')}`);
                     });
-                    displayText = resultParts.join('\n\n');
-                    contentBox.textContent = displayText;
-                    logRoll(results, displayText);
-                }, 500);
+                    contentBox.textContent = tempResults.join('\n\n');
+                    
+                    animationElapsed += animationInterval;
+                    if (animationElapsed >= animationDuration) {
+                        clearInterval(animationTimer);
+                        
+                        // 最終結果を表示
+                        const finalResults = [];
+                        tab.listGroups.forEach(group => {
+                            const count = Math.min(group.count || 1, group.items.length);
+                            const shuffled = [...group.items].sort(() => Math.random() - 0.5);
+                            const selected = shuffled.slice(0, count);
+                            finalResults.push(`【${group.name}】\n${selected.join(', ')}`);
+                            results.push(...selected);
+                        });
+                        displayText = finalResults.join('\n\n');
+                        contentBox.textContent = displayText;
+                        logRoll(results, displayText);
+                    }
+                }, animationInterval);
+                
             } else {
-                // サイコロ - 上部バーに表示
+                // サイコロ - アニメーション付き
                 const labelsDiv = document.getElementById('diceLabels');
-                labelsDiv.textContent = 'ロール中...';
+                
+                // 2秒間ランダムに数字を表示
+                const animationDuration = 2000;
+                const animationInterval = 100;
+                let animationElapsed = 0;
+                
                 labelsDiv.classList.add('rolling-animation');
                 
-                setTimeout(() => {
+                const animationTimer = setInterval(() => {
+                    const tempResults = [];
                     for (let i = 0; i < tab.diceCount; i++) {
                         const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
-                        results.push(result);
+                        tempResults.push(result);
                     }
                     
                     const labelParts = [];
-                    for (let i = 0; i < results.length; i++) {
+                    for (let i = 0; i < tempResults.length; i++) {
                         const label = tab.labels[i] || String.fromCharCode(119 + i);
-                        labelParts.push(`${label}:${results[i]}`);
+                        labelParts.push(`${label}:${tempResults[i]}`);
                     }
-                    displayText = labelParts.join(' ');
-                    labelsDiv.textContent = displayText;
-                    labelsDiv.classList.remove('rolling-animation');
-                    logRoll(results, displayText);
-                }, 500);
+                    labelsDiv.textContent = labelParts.join(' ');
+                    
+                    animationElapsed += animationInterval;
+                    if (animationElapsed >= animationDuration) {
+                        clearInterval(animationTimer);
+                        
+                        // 最終結果を表示
+                        results = [];
+                        for (let i = 0; i < tab.diceCount; i++) {
+                            const result = Math.floor(Math.random() * (tab.diceMax - tab.diceMin + 1)) + tab.diceMin;
+                            results.push(result);
+                        }
+                        
+                        const labelParts = [];
+                        for (let i = 0; i < results.length; i++) {
+                            const label = tab.labels[i] || String.fromCharCode(119 + i);
+                            labelParts.push(`${label}:${results[i]}`);
+                        }
+                        displayText = labelParts.join(' ');
+                        labelsDiv.textContent = displayText;
+                        labelsDiv.classList.remove('rolling-animation');
+                        logRoll(results, displayText);
+                    }
+                }, animationInterval);
             }
             
             setTimeout(() => {
@@ -871,7 +922,7 @@
             } else {
                 document.getElementById('diceBarContainer').classList.remove('hidden');
             }
-
+            
             saveTabs();
             rollAllDice();
             showNotification('設定を保存しました！');
@@ -881,12 +932,14 @@
             const title = prompt('新しいタブのタイトルを入力:');
             if (!title) return;
             
-            const newId = Math.max(...tabs.map(t => t.id), 0) + 1;
+            const type = confirm('サイコロタブを作成しますか？\n（キャンセルでリスト抽選タブ）') ? 'dice' : 'list';
+            
+            const newId = tabs.length > 0 ? Math.max(...tabs.map(t => t.id)) + 1 : 1;
             tabs.push({
                 id: newId,
                 title: title,
                 content: '',
-                type: 'dice',
+                type: type,
                 diceCount: 2,
                 diceMin: 1,
                 diceMax: 6,
@@ -899,11 +952,18 @@
         }
 
         function deleteTab() {
-            if (!confirm('このタブを削除しますか？')) return;
+            if (!confirm('このタブを削除しますか？\n（この操作は取り消せません）')) return;
             
-            tabs = tabs.filter(t => t.id !== currentTabId);
-            database.ref('logs/' + currentTabId).remove();
+            const deletedId = currentTabId;
+            tabs = tabs.filter(t => t.id !== deletedId);
+            
+            // ログも削除
+            database.ref('logs/' + deletedId).remove();
+            
+            // タブを保存
             saveTabs();
+            
+            // ホームに戻る
             goHome();
             showNotification('タブを削除しました！');
         }
@@ -918,6 +978,6 @@
                 notification.remove();
             }, 3000);
         }
-    </script>
+        </script>
 </body>
 </html>
