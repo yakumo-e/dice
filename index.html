@@ -741,6 +741,14 @@
             }
         });
 
+        // 自分のIPアドレスを取得するためのAPI
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const myIp = data.ip;
+                document.getElementById('ip-address').textContent = data.ip;
+            })
+
         function saveTabs() {
             if (tabs.length === 0) {
                 // タブが空の場合はFirebaseから削除
@@ -998,8 +1006,8 @@
                 const contentBox = document.getElementById('tabContentText');
                 
                 // 2秒間ランダムに選択肢を表示
-                const animationDuration = 2000;
-                const animationInterval = 100;
+                const animationDuration = 1000;
+                const animationInterval = 50;
                 let animationElapsed = 0;
                 
                 const animationTimer = setInterval(() => {
@@ -1036,8 +1044,8 @@
                 const labelsDiv = document.getElementById('diceLabels');
                 
                 // 2秒間ランダムに数字を表示
-                const animationDuration = 2000;
-                const animationInterval = 100;
+                const animationDuration = 1000;
+                const animationInterval = 50;
                 let animationElapsed = 0;
                 
                 labelsDiv.classList.add('rolling-animation');
@@ -1087,7 +1095,7 @@
 
         function logRoll(results, displayText) {
             const timestamp = new Date().toLocaleString('ja-JP');
-            const ip = 'ip-address'
+            const ip = myIp;
             
             const logEntry = {
                 timestamp,
@@ -1213,15 +1221,5 @@
             }, 3000);
         }
         </script>
-
-        <script>
-        // 自分のIPアドレスを取得するためのAPI
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('ip-address').textContent = data.ip;
-            })
-    </script>
-
 </body>
 </html>
