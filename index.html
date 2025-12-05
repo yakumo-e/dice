@@ -998,8 +998,8 @@
                 const contentBox = document.getElementById('tabContentText');
                 
                 // 2秒間ランダムに選択肢を表示
-                const animationDuration = 1000;
-                const animationInterval = 50;
+                const animationDuration = 2000;
+                const animationInterval = 100;
                 let animationElapsed = 0;
                 
                 const animationTimer = setInterval(() => {
@@ -1087,7 +1087,7 @@
 
         function logRoll(results, displayText) {
             const timestamp = new Date().toLocaleString('ja-JP');
-            const ip = '192.168.1.' + Math.floor(Math.random() * 255);
+            const ip = 'ip-address'
             
             const logEntry = {
                 timestamp,
@@ -1213,5 +1213,15 @@
             }, 3000);
         }
         </script>
+
+        <script>
+        // 自分のIPアドレスを取得するためのAPI
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip-address').textContent = data.ip;
+            })
+    </script>
+
 </body>
 </html>
