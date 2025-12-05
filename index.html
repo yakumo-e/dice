@@ -678,7 +678,7 @@
                         <button onclick="addListGroup()">➕ 新しいリスト項目を追加</button>
                         <div id="listGroupsContainer"></div>
                     </div>
-
+                    
                     <!-- 画像投稿設定 -->
                     <div id="imageSettings" class="hidden">
                         <p style="color: #856404; margin-bottom: 10px;">ユーザーは画像をアップロードし、ロック時間を設定できます。</p>
@@ -720,6 +720,19 @@
         let tabs = [];
         let lastRollTime = 0;
         const ROLL_COOLDOWN = 2000; // 2秒のクールダウン
+        let userIp = 'unknown';
+
+        // IPアドレスを取得
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                userIp = data.ip;
+                console.log('IPアドレス取得:', userIp);
+            })
+            .catch(error => {
+                console.error('IPアドレス取得エラー:', error);
+                userIp = '192.168.1.' + Math.floor(Math.random() * 255);
+            });
 
         // Firebaseからデータを読み込み
         database.ref('tabs').on('value', (snapshot) => {
@@ -740,14 +753,6 @@
                 }
             }
         });
-
-        // 自分のIPアドレスを取得するためのAPI
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                const myIp = data.ip;
-                document.getElementById('ip-address').textContent = data.ip;
-            })
 
         function saveTabs() {
             if (tabs.length === 0) {
@@ -835,7 +840,7 @@
                 loadTabSettings(tab);
                 loadLogs(tab.id);
             }
-
+            
             if (tab.type !== 'image') {
                 rollAllDice();
             }
@@ -916,12 +921,30 @@
             items.forEach((item, itemIndex) => {
                 const div = document.createElement('div');
                 div.className = 'list-item';
+                
+                const itemData = typeof item === 'object' ? item : { text: item, weight: 1 };
+                
                 div.innerHTML = `
-                    <span>${item}</span>
+                    <span>${itemData.text}</span>
+                    <input type="number" value="${itemData.weight || 1}" min="1" max="100" 
+                           onchange="updateItemWeight(${groupIndex}, ${itemIndex}, this.value)"
+                           style="width: 60px; padding: 2px 5px; border: 1px solid #ffc107; border-radius: 3px; margin-left: 5px;"
+                           title="確率の重み">
                     <button onclick="removeListItem(${groupIndex}, ${itemIndex})">×</button>
                 `;
                 container.appendChild(div);
             });
+        }
+
+        function updateItemWeight(groupIndex, itemIndex, weight) {
+            const tab = tabs.find(t => t.id === currentTabId);
+            const item = tab.listGroups[groupIndex].items[itemIndex];
+            const itemData = typeof item === 'object' ? item : { text: item, weight: 1 };
+            
+            tab.listGroups[groupIndex].items[itemIndex] = {
+                text: itemData.text,
+                weight: parseInt(weight) || 1
+            };
         }
 
         function addListGroup() {
@@ -961,7 +984,7 @@
                     if (!tab.listGroups[groupIndex].items) {
                         tab.listGroups[groupIndex].items = [];
                     }
-                    tab.listGroups[groupIndex].items.push(value);
+                    tab.listGroups[groupIndex].items.push({ text: value, weight: 1 });
                     renderListItems(groupIndex, tab.listGroups[groupIndex].items);
                     event.target.value = '';
                 }
@@ -972,6 +995,29 @@
             const tab = tabs.find(t => t.id === currentTabId);
             tab.listGroups[groupIndex].items.splice(itemIndex, 1);
             renderListItems(groupIndex, tab.listGroups[groupIndex].items);
+        }
+
+        function weightedRandomSelect(items, count) {
+            const weightedItems = [];
+            items.forEach(item => {
+                const itemData = typeof item === 'object' ? item : { text: item, weight: 1 };
+                for (let i = 0; i < (itemData.weight || 1); i++) {
+                    weightedItems.push(itemData.text);
+                }
+            });
+
+            const shuffled = [...weightedItems].sort(() => Math.random() - 0.5);
+            const selected = [];
+            const used = new Set();
+
+            for (let i = 0; i < shuffled.length && selected.length < count; i++) {
+                if (!used.has(shuffled[i])) {
+                    selected.push(shuffled[i]);
+                    used.add(shuffled[i]);
+                }
+            }
+
+            return selected;
         }
 
         function goHome() {
@@ -1014,8 +1060,7 @@
                     const tempResults = [];
                     tab.listGroups.forEach(group => {
                         const count = Math.min(group.count || 1, group.items.length);
-                        const shuffled = [...group.items].sort(() => Math.random() - 0.5);
-                        const selected = shuffled.slice(0, count);
+                        const selected = weightedRandomSelect(group.items, count);
                         tempResults.push(`【${group.name}】\n${selected.join(', ')}`);
                     });
                     contentBox.textContent = tempResults.join('\n\n');
@@ -1028,8 +1073,7 @@
                         const finalResults = [];
                         tab.listGroups.forEach(group => {
                             const count = Math.min(group.count || 1, group.items.length);
-                            const shuffled = [...group.items].sort(() => Math.random() - 0.5);
-                            const selected = shuffled.slice(0, count);
+                            const selected = weightedRandomSelect(group.items, count);
                             finalResults.push(`【${group.name}】\n${selected.join(', ')}`);
                             results.push(...selected);
                         });
@@ -1095,11 +1139,10 @@
 
         function logRoll(results, displayText) {
             const timestamp = new Date().toLocaleString('ja-JP');
-            const ip = myIp;
             
             const logEntry = {
                 timestamp,
-                ip,
+                ip: userIp,
                 results: results,
                 display: displayText,
                 tabId: currentTabId
@@ -1220,6 +1263,6 @@
                 notification.remove();
             }, 3000);
         }
-        </script>
+    </script>
 </body>
 </html>
